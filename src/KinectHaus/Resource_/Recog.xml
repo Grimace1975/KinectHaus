@@ -8,6 +8,12 @@
           <item> haus </item>
         </one-of>
       </item>
+      <item>
+        <tag>EXIT</tag>
+        <one-of>
+          <item> exit </item>
+        </one-of>
+      </item>
     </one-of>
   </rule>
 </grammar>

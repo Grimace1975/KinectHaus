@@ -6,15 +6,24 @@ using System;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Media;
 using System.Text;
+using System.Threading;
+using System.Windows.Forms;
 
 namespace KinectHaus
 {
-    public class Recog
+    public interface IRecog
+    {
+        void Process(RecognitionResult r);
+    }
+
+    public class Recog : IRecog
     {
         KinectSensor _sensor;
         SpeechRecognitionEngine _sre;
         Action<string> _outputAction;
+        IRecog _recog;
 
         public Recog(Action<string> outputAction)
         {
@@ -30,7 +39,9 @@ namespace KinectHaus
                 var g = new Grammar(memoryStream);
                 _sre.LoadGrammar(g);
             }
+            _recog = this;
             State = RecogState.Idle;
+            SystemSounds.Beep.Play();
         }
 
         private SpeechRecognitionEngine StartKinect()
@@ -39,17 +50,14 @@ namespace KinectHaus
             if (_sensor != null)
                 try { _sensor.Start(); }
                 catch (IOException) { _sensor = null; }
-            if (_sensor != null)
+            if (_sensor == null)
+                return new SpeechRecognitionEngine(new CultureInfo("en-US"));
+            var ri = SpeechRecognitionEngine.InstalledRecognizers().FirstOrDefault(x =>
             {
-                var ri = SpeechRecognitionEngine.InstalledRecognizers().FirstOrDefault(x =>
-                {
-                    string value;
-                    return (x.AdditionalInfo.TryGetValue("Kinect", out value) && string.Equals("true", value, StringComparison.OrdinalIgnoreCase) && string.Equals("en-US", x.Culture.Name, StringComparison.OrdinalIgnoreCase));
-                });
-                if (ri != null)
-                    return new SpeechRecognitionEngine(ri.Id);
-            }
-            return new SpeechRecognitionEngine(new CultureInfo("en-US"));
+                string value;
+                return (x.AdditionalInfo.TryGetValue("Kinect", out value) && string.Equals("true", value, StringComparison.OrdinalIgnoreCase) && string.Equals("en-US", x.Culture.Name, StringComparison.OrdinalIgnoreCase));
+            });
+            return (ri != null ? new SpeechRecognitionEngine(ri.Id) : new SpeechRecognitionEngine(new CultureInfo("en-US")));
         }
 
         public void Start()
@@ -86,14 +94,53 @@ namespace KinectHaus
 
         private void SpeechRecognized(object sender, SpeechRecognizedEventArgs e)
         {
-            const double ConfidenceThreshold = 0.3; // Speech utterance confidence below which we treat speech as if it hadn't been heard
-            if (e.Result.Confidence >= ConfidenceThreshold)
+            if (e.Result.Confidence >= 0.3)
+            {
                 _outputAction(e.Result.Semantics.Value.ToString());
+                Process(e.Result);
+            }
+        }
+
+        public void Process(RecognitionResult r)
+        {
+            switch (r.Semantics.Value.ToString())
+            {
+                case "KINECT":
+                    SystemSounds.Beep.Play();
+                    SystemSounds.Beep.Play();
+                    switch (State)
+                    {
+                        case RecogState.Media:
+                            _recog = new RecogMedia();
+                        case RecogState.Vlc:
+                            _recog = new RecogVlc();
+                    }
+                    break;
+                case "EXIT":
+                    SystemSounds.Exclamation.Play();
+                    if (r.Confidence >= 0.6)
+                        Application.Exit();
+                    break;
+            }
         }
 
         private void SpeechRejected(object sender, SpeechRecognitionRejectedEventArgs e)
         {
             _outputAction(e.Result.Confidence.ToString());
+        }
+
+        public static bool CallWithTimeout(Action action, int timeoutMilliseconds)
+        {
+            Thread threadToKill = null;
+            Action wrappedAction = () => { threadToKill = Thread.CurrentThread; action(); };
+            var result = wrappedAction.BeginInvoke(null, null);
+            if (result.AsyncWaitHandle.WaitOne(timeoutMilliseconds))
+            {
+                wrappedAction.EndInvoke(result);
+                return true;
+            }
+            threadToKill.Abort();
+            return false;
         }
     }
 }
