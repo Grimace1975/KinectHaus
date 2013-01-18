@@ -5,9 +5,9 @@ namespace KinectHaus
 {
     public class SysTrayApp : Form
     {
-        private NotifyIcon _trayIcon;
-        private TextBox Output;
-        private ContextMenu _trayMenu;
+        readonly Recog _recog;
+        readonly NotifyIcon _trayIcon;
+        TextBox Output;
 
         [STAThread]
         public static void Main()
@@ -17,15 +17,16 @@ namespace KinectHaus
 
         public SysTrayApp()
         {
-            _trayMenu = new ContextMenu();
-            _trayMenu.MenuItems.Add("Exit", OnExit);
+            var trayMenu = new ContextMenu();
+            trayMenu.MenuItems.Add("Exit", OnExit);
             _trayIcon = new NotifyIcon
             {
                 Text = "MyTrayApp",
                 Icon = new Icon(SystemIcons.Application, 40, 40),
-                ContextMenu = _trayMenu,
+                ContextMenu = trayMenu,
                 Visible = true,
             };
+            _recog = new Recog(WriteLine);
             InitializeComponent();
         }
 
@@ -34,7 +35,7 @@ namespace KinectHaus
             if (isDisposing)
             {
                 _trayIcon.Dispose();
-                Recog.Stop();
+                _recog.Stop();
             }
             base.Dispose(isDisposing);
         }
@@ -44,7 +45,7 @@ namespace KinectHaus
             //Visible = false;
             ShowInTaskbar = false;
             WriteLine("Start");
-            Recog.Start(WriteLine);
+            _recog.Start();
             base.OnLoad(e);
         }
 
@@ -56,6 +57,8 @@ namespace KinectHaus
         }
 
         private void OnExit(object sender, EventArgs e) { Application.Exit(); }
+
+        #region Forms Stuff
 
         private void InitializeComponent()
         {
@@ -78,5 +81,7 @@ namespace KinectHaus
             this.ResumeLayout(false);
             this.PerformLayout();
         }
+
+        #endregion
     }
 }
