@@ -50,7 +50,7 @@ namespace KinectHaus
 
         private void ShowBallonTip(string title, string text, ListenIcon icon)
         {
-            _trayIcon.ShowBalloonTip(20000, title, text, (ToolTipIcon)(int)icon);
+            _trayIcon.ShowBalloonTip(15000, title, text, (ToolTipIcon)(int)icon);
             //Output.Text += text + Environment.NewLine;
         }
 

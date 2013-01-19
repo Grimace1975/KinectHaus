@@ -65,16 +65,9 @@ namespace KinectHaus.Properties {
         ///  &lt;rule id=&quot;rootRule&quot;&gt;
         ///    &lt;one-of&gt;
         ///      &lt;item&gt;
-        ///        &lt;tag&gt;KINECT&lt;/tag&gt;
+        ///        &lt;tag&gt;COMMAND&lt;/tag&gt;
         ///        &lt;one-of&gt;
-        ///          &lt;item&gt; kinect &lt;/item&gt;
-        ///          &lt;item&gt; haus &lt;/item&gt;
-        ///        &lt;/one-of&gt;
-        ///      &lt;/item&gt;
-        ///      &lt;item&gt;
-        ///        &lt;tag&gt;EXIT&lt;/tag&gt;
-        ///        &lt;one-of&gt;
-        ///          &lt;item&gt; exit &lt;/item&gt;
+        ///          &lt;item&gt; slave &lt;/item&gt;
         ///        &lt;/one-of&gt;
         ///      &lt;/item&gt;
         ///    &lt;/one-of&gt;
@@ -92,26 +85,77 @@ namespace KinectHaus.Properties {
         ///  &lt;rule id=&quot;rootRule&quot;&gt;
         ///    &lt;one-of&gt;
         ///      &lt;item&gt;
-        ///        &lt;tag&gt;MEDIA&lt;/tag&gt;
+        ///        &lt;tag&gt;EXIT&lt;/tag&gt;
         ///        &lt;one-of&gt;
-        ///          &lt;item&gt; media &lt;/item&gt;
+        ///          &lt;item&gt; exit &lt;/item&gt;
         ///        &lt;/one-of&gt;
         ///      &lt;/item&gt;
         ///      &lt;item&gt;
-        ///        &lt;tag&gt;VLC&lt;/tag&gt;
+        ///        &lt;tag&gt;SERIES&lt;/tag&gt;
         ///        &lt;one-of&gt;
-        ///          &lt;item&gt; media &lt;/item&gt;
+        ///          &lt;item&gt; series &lt;/item&gt;
+        ///          &lt;item&gt; show &lt;/item&gt;
+        ///          &lt;item&gt; shows &lt;/item&gt;
         ///        &lt;/one-of&gt;
         ///      &lt;/item&gt;
         ///      &lt;item&gt;
-        ///        &lt;tag&gt;PAUSE&lt;/tag&gt;
-        ///        &lt;one-of&gt;
-        ///          &lt;item&gt; pause &lt;/item&gt;
-        ///   [rest of string was truncated]&quot;;.
+        ///        &lt;tag&gt; [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string RecogCommand {
             get {
                 return ResourceManager.GetString("RecogCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;grammar version=&quot;1.0&quot; xml:lang=&quot;en-US&quot; root=&quot;rootRule&quot; tag-format=&quot;semantics/1.0-literals&quot; xmlns=&quot;http://www.w3.org/2001/06/grammar&quot;&gt;
+        ///  &lt;rule id=&quot;rootRule&quot;&gt;
+        ///    &lt;one-of&gt;
+        ///      &lt;item&gt;
+        ///        &lt;tag&gt;CANCEL&lt;/tag&gt;
+        ///        &lt;one-of&gt;
+        ///          &lt;item&gt; cancel &lt;/item&gt;
+        ///        &lt;/one-of&gt;
+        ///      &lt;/item&gt;
+        ///      &lt;item&gt;
+        ///        &lt;tag&gt;PLAY&lt;/tag&gt;
+        ///        &lt;one-of&gt;
+        ///          &lt;item&gt; play &lt;/item&gt;
+        ///        &lt;/one-of&gt;
+        ///      &lt;/item&gt;
+        ///    &lt;/one-of&gt;
+        ///  &lt;/rule&gt;
+        ///&lt;/grammar&gt;.
+        /// </summary>
+        internal static string RecogMovies {
+            get {
+                return ResourceManager.GetString("RecogMovies", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;grammar version=&quot;1.0&quot; xml:lang=&quot;en-US&quot; root=&quot;rootRule&quot; tag-format=&quot;semantics/1.0-literals&quot; xmlns=&quot;http://www.w3.org/2001/06/grammar&quot;&gt;
+        ///  &lt;rule id=&quot;rootRule&quot;&gt;
+        ///    &lt;one-of&gt;
+        ///      &lt;item&gt;
+        ///        &lt;tag&gt;CANCEL&lt;/tag&gt;
+        ///        &lt;one-of&gt;
+        ///          &lt;item&gt; cancel &lt;/item&gt;
+        ///        &lt;/one-of&gt;
+        ///      &lt;/item&gt;
+        ///      &lt;item&gt;
+        ///        &lt;tag&gt;PLAY&lt;/tag&gt;
+        ///        &lt;one-of&gt;
+        ///          &lt;item&gt; play &lt;/item&gt;
+        ///        &lt;/one-of&gt;
+        ///      &lt;/item&gt;
+        ///    &lt;/one-of&gt;
+        ///  &lt;/rule&gt;
+        ///&lt;/grammar&gt;.
+        /// </summary>
+        internal static string RecogSeries {
+            get {
+                return ResourceManager.GetString("RecogSeries", resourceCulture);
             }
         }
     }

@@ -20,37 +20,38 @@ namespace KinectHaus
         public void Start(SpeechRecognitionEngine sre)
         {
             using (var memoryStream = new MemoryStream(Encoding.ASCII.GetBytes(Resources.RecogCommand)))
-            {
-                var g = new Grammar(memoryStream);
-                sre.LoadGrammar(g);
-            }
+                sre.LoadGrammar(new Grammar(memoryStream));
         }
 
-        public void Stop()
-        {
-        }
+        public void Stop() { }
 
-        public IRecog Process(RecognitionResult r)
+        public IRecog Process(RecognitionResult r, out bool show)
         {
+            show = true;
             switch (r.Semantics.Value.ToString())
             {
-                case "EXIT":
+                case "CANCEL":
+                    show = false;
                     SystemSounds.Exclamation.Play();
+                    return Listen.CancelRecog;
+                case "EXIT":
+                    show = false;
                     if (r.Confidence >= 0.6)
+                    {
+                        SystemSounds.Exclamation.Play();
                         Application.Exit();
+                    }
                     return null;
                 case "SERIES":
                     return _recogSeries;
                 case "MOVIES":
                     return _recogMovies;
                 case "PLAY":
-                    SystemSounds.Exclamation.Play();
                     Vlc.Play();
-                    return null;
+                    return Listen.ResetRecog;
                 case "PAUSE":
-                    SystemSounds.Exclamation.Play();
                     Vlc.Pause();
-                    return null;
+                    return Listen.ResetRecog;
                 default:
                     return null;
             }

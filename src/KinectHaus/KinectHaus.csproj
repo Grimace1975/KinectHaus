@@ -47,7 +47,7 @@
     <Compile Include="RecogMovies.cs" />
     <Compile Include="IRecog.cs" />
     <Compile Include="RecogIdle.cs" />
-    <Compile Include="Util.cs" />
+    <Compile Include="Extensions.cs" />
     <Compile Include="RecogCommand.cs" />
     <Compile Include="RecogSeries.cs" />
     <Compile Include="Vlc.cs" />
@@ -87,6 +87,12 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resource_\RecogCommand.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resource_\RecogSeries.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resource_\RecogMovies.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

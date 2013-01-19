@@ -2,6 +2,12 @@
   <rule id="rootRule">
     <one-of>
       <item>
+        <tag>CANCEL</tag>
+        <one-of>
+          <item> cancel </item>
+        </one-of>
+      </item>
+      <item>
         <tag>EXIT</tag>
         <one-of>
           <item> exit </item>

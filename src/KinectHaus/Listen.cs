@@ -13,10 +13,10 @@ namespace KinectHaus
 {
     public class Listen
     {
+        public static readonly IRecog CancelRecog = new Recog();
+        public static readonly IRecog ResetRecog = new Recog();
         static readonly IRecog _recogIdle = new RecogIdle();
-        readonly Stack<IRecog> _recogStack = new Stack<IRecog>();
         readonly Action<string, string, ListenIcon> _balloonTip;
-        IRecog _recog = _recogIdle;
 
         public Listen(Action<string, string, ListenIcon> balloonTip)
         {
@@ -55,8 +55,9 @@ namespace KinectHaus
                 _sre.SetInputToAudioStream(_sensor.AudioSource.Start(), new SpeechAudioFormatInfo(EncodingFormat.Pcm, 16000, 16, 1, 32000, 2, null));
             else
                 _sre.SetInputToDefaultAudioDevice();
-            MoveToIdle();
+            RecogStackClear();
             _sre.RecognizeAsync(RecognizeMode.Multiple);
+            _balloonTip("KinectHaus\u2122", "My name is SLAVE", ListenIcon.Info);
         }
 
         public void Stop()
@@ -78,50 +79,95 @@ namespace KinectHaus
 
         public static string CleanPath(string x)
         {
+            x = Path.GetFileName(x);
             return x.Split('(')[0].Trim();
         }
 
         #endregion
 
-        private void MoveToIdle()
+        #region RecogStack
+
+        readonly Stack<IRecog> _recogStack = new Stack<IRecog>();
+        IRecog _recog;
+
+        private void RecogStackClear()
         {
+            _recogStack.Clear();
+            _sre.UnloadAllGrammars();
+            _recog = _recogIdle;
             _recog.Start(_sre);
-            _balloonTip("KinectHaus\u2122", "My name is SLAVE", ListenIcon.Info);
         }
+
+        private void RecogStackPop()
+        {
+            if (_recogStack.Count > 0)
+            {
+                _recog = _recogStack.Pop();
+                _sre.UnloadAllGrammars();
+                _recog.Start(_sre);
+            }
+        }
+
+        private void RecogStackPush(IRecog item)
+        {
+            _recogStack.Push(_recog);
+            _recog = item;
+            _sre.UnloadAllGrammars();
+            _recog.Start(_sre);
+        }
+
+        #endregion
+
+        #region Timer
+
+        static readonly TimeSpan _timerPeriod = new TimeSpan(0, 0, 2);
+        Timer _timer;
+
+        public void TimerStart()
+        {
+            _timer = new Timer(new TimerCallback(TimerCompletionCallback), null, _timerPeriod, _timerPeriod);
+        }
+
+        public void TimerStop()
+        {
+            if (_timer != null)
+            {
+                _timer.Dispose();
+                _timer = null;
+            }
+        }
+
+        private void TimerCompletionCallback(object state)
+        {
+            SystemSounds.Beep.Play();
+        }
+
+        #endregion
 
         private void SpeechRecognized(object sender, SpeechRecognizedEventArgs e)
         {
             lock (_recog)
-                if (e.Result.Confidence >= 0.3)
+                if (e.Result.Confidence >= 0.5)
                 {
-                    var text = string.Format("{0} {1:P0}", e.Result.Semantics.Value, e.Result.Confidence);
-                    _balloonTip(_recog.Title, text, ListenIcon.None);
-                    var r = _recog.Process(e.Result);
-                    if (r != null)
-                    {
-                        _recogStack.Push(_recog);
-                        _recog = r;
-                        _sre.UnloadAllGrammars();
-                        _recog.Start(_sre);
-                    }
-                }
-        }
-
-        private void SpeechRevert()
-        {
-            lock (_recog)
-                if (_recogStack.Count > 0)
-                {
-                    _recog = _recogStack.Pop();
-                    _sre.UnloadAllGrammars();
-                    _recog.Start(_sre);
+                    var args = e.Result.Semantics.Value.ToString().Split('|');
+                    var text = string.Format("{0} {1:P0}", args[0], e.Result.Confidence);
+                    bool show;
+                    var r = _recog.Process(e.Result, out show);
+                    if (show)
+                        _balloonTip(_recog.Title, text, ListenIcon.None);
+                    if (r == CancelRecog)
+                        RecogStackPop();
+                    else if (r == ResetRecog)
+                        RecogStackClear();
+                    else if (r != null)
+                        RecogStackPush(r);
                 }
         }
 
         private void SpeechRejected(object sender, SpeechRecognitionRejectedEventArgs e)
         {
-            var text = string.Format("{0} {1}", e.Result.Semantics.Value, e.Result.Confidence);
-            _balloonTip(_recog.Title, text, ListenIcon.Error);
+            //var text = string.Format("{0} {1}", e.Result.Semantics.Value, e.Result.Confidence);
+            //_balloonTip(_recog.Title, text, ListenIcon.Error);
         }
     }
 }
