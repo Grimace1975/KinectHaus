@@ -2,16 +2,9 @@
   <rule id="rootRule">
     <one-of>
       <item>
-        <tag>KINECT</tag>
+        <tag>COMMAND</tag>
         <one-of>
-          <item> kinect </item>
-          <item> haus </item>
-        </one-of>
-      </item>
-      <item>
-        <tag>EXIT</tag>
-        <one-of>
-          <item> exit </item>
+          <item> slave </item>
         </one-of>
       </item>
     </one-of>

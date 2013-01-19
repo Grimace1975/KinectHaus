@@ -43,10 +43,15 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="RecogState.cs" />
-    <Compile Include="RecogMedia.cs" />
-    <Compile Include="RecogVlc.cs" />
-    <Compile Include="Recog.cs" />
+    <Compile Include="ListenIcon.cs" />
+    <Compile Include="RecogMovies.cs" />
+    <Compile Include="IRecog.cs" />
+    <Compile Include="RecogIdle.cs" />
+    <Compile Include="Util.cs" />
+    <Compile Include="RecogCommand.cs" />
+    <Compile Include="RecogSeries.cs" />
+    <Compile Include="Vlc.cs" />
+    <Compile Include="Listen.cs" />
     <Compile Include="SysTrayApp.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -81,7 +86,7 @@
     <Resource Include="Resource_\Recog.xml" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resource_\RecogVlc.xml" />
+    <Resource Include="Resource_\RecogCommand.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

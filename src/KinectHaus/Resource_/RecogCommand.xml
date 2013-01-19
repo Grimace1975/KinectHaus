@@ -2,31 +2,36 @@
   <rule id="rootRule">
     <one-of>
       <item>
-        <tag>FORWARD</tag>
+        <tag>EXIT</tag>
         <one-of>
-          <item> forwards </item>
-          <item> forward </item>
-          <item> straight </item>
+          <item> exit </item>
         </one-of>
       </item>
       <item>
-        <tag>BACKWARD</tag>
+        <tag>SERIES</tag>
         <one-of>
-          <item> backward </item>
-          <item> backwards </item>
-          <item> back </item>
+          <item> series </item>
+          <item> show </item>
+          <item> shows </item>
         </one-of>
       </item>
       <item>
-        <tag>LEFT</tag>
+        <tag>MOVIES</tag>
         <one-of>
-          <item> turn left </item>
+          <item> movie </item>
+          <item> movies </item>
         </one-of>
       </item>
       <item>
-        <tag>RIGHT</tag>
+        <tag>PLAY</tag>
         <one-of>
-          <item> turn right </item>
+          <item> play </item>
+        </one-of>
+      </item>
+      <item>
+        <tag>PAUSE</tag>
+        <one-of>
+          <item> pause </item>
         </one-of>
       </item>
     </one-of>

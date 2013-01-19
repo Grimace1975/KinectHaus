@@ -5,7 +5,7 @@ namespace KinectHaus
 {
     public class SysTrayApp : Form
     {
-        readonly Recog _recog;
+        readonly Listen _listen;
         readonly NotifyIcon _trayIcon;
         TextBox Output;
 
@@ -26,7 +26,7 @@ namespace KinectHaus
                 ContextMenu = trayMenu,
                 Visible = true,
             };
-            _recog = new Recog(WriteLine);
+            _listen = new Listen(ShowBallonTip);
             InitializeComponent();
         }
 
@@ -35,25 +35,23 @@ namespace KinectHaus
             if (isDisposing)
             {
                 _trayIcon.Dispose();
-                _recog.Stop();
+                _listen.Stop();
             }
             base.Dispose(isDisposing);
         }
 
         protected override void OnLoad(EventArgs e)
         {
-            //Visible = false;
+            Visible = false;
             ShowInTaskbar = false;
-            WriteLine("Start");
-            _recog.Start();
+            _listen.Start();
             base.OnLoad(e);
         }
 
-        private void WriteLine(string text)
+        private void ShowBallonTip(string title, string text, ListenIcon icon)
         {
-            if (string.Equals(text, "end", StringComparison.OrdinalIgnoreCase))
-                Close();
-            Output.Text += text + "\n";
+            _trayIcon.ShowBalloonTip(20000, title, text, (ToolTipIcon)(int)icon);
+            //Output.Text += text + Environment.NewLine;
         }
 
         private void OnExit(object sender, EventArgs e) { Application.Exit(); }
