@@ -25,14 +25,15 @@ namespace KinectHaus
 
         public IRecog Process(RecognitionResult r, out bool show)
         {
-            show = true;
             switch (r.Semantics.Value.ToString())
             {
                 case "COMMAND":
+                    SystemSounds.Exclamation.Play();
+                    show = true;
                     return _recogCommand;
-                default:
-                    return null;
             }
+            show = false;
+            return null;
         }
     }
 }

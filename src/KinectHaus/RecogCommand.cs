@@ -27,34 +27,40 @@ namespace KinectHaus
 
         public IRecog Process(RecognitionResult r, out bool show)
         {
-            show = true;
             switch (r.Semantics.Value.ToString())
             {
                 case "CANCEL":
-                    show = false;
                     SystemSounds.Exclamation.Play();
+                    show = false;
                     return Listen.CancelRecog;
                 case "EXIT":
-                    show = false;
                     if (r.Confidence >= 0.6)
                     {
                         SystemSounds.Exclamation.Play();
                         Application.Exit();
+                        show = true;
+                        return null;
                     }
-                    return null;
+                    break;
                 case "SERIES":
-                    return _recogSeries;
+                    if (r.Confidence >= 0.5)
+                    {
+                        show = true;
+                        return _recogSeries;
+                    }
+                    break;
                 case "MOVIES":
-                    return _recogMovies;
-                case "PLAY":
-                    Vlc.Play();
-                    return Listen.ResetRecog;
-                case "PAUSE":
-                    Vlc.Pause();
-                    return Listen.ResetRecog;
-                default:
-                    return null;
+                    if (r.Confidence >= 0.5)
+                    {
+                        show = true;
+                        return _recogMovies;
+                    }
+                    break;
+                case "PLAY": Vlc.Play(); show = true; return Listen.ResetRecog;
+                case "PAUSE": Vlc.Pause(); show = true; return Listen.ResetRecog;
             }
+            show = false;
+            return null;
         }
     }
 }

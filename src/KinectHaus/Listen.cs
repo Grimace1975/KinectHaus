@@ -96,11 +96,15 @@ namespace KinectHaus
             _sre.UnloadAllGrammars();
             _recog = _recogIdle;
             _recog.Start(_sre);
+            SystemSounds.Beep.Play();
+            TimerStop();
         }
 
         private void RecogStackPop()
         {
-            if (_recogStack.Count > 0)
+            if (_recogStack.Count == 1)
+                RecogStackClear();
+            else if (_recogStack.Count > 1)
             {
                 _recog = _recogStack.Pop();
                 _sre.UnloadAllGrammars();
@@ -122,10 +126,13 @@ namespace KinectHaus
 
         static readonly TimeSpan _timerPeriod = new TimeSpan(0, 0, 2);
         Timer _timer;
+        DateTime _endTime;
 
         public void TimerStart()
         {
-            _timer = new Timer(new TimerCallback(TimerCompletionCallback), null, _timerPeriod, _timerPeriod);
+            if (_timer == null)
+                _timer = new Timer(new TimerCallback(TimerCompletionCallback), null, _timerPeriod, _timerPeriod);
+            _endTime = DateTime.Now.AddSeconds(10);
         }
 
         public void TimerStop()
@@ -139,7 +146,8 @@ namespace KinectHaus
 
         private void TimerCompletionCallback(object state)
         {
-            SystemSounds.Beep.Play();
+            if (_endTime < DateTime.Now)
+                RecogStackClear();
         }
 
         #endregion
@@ -147,8 +155,9 @@ namespace KinectHaus
         private void SpeechRecognized(object sender, SpeechRecognizedEventArgs e)
         {
             lock (_recog)
-                if (e.Result.Confidence >= 0.5)
+                if (e.Result.Confidence >= 0.3)
                 {
+                    TimerStart();
                     var args = e.Result.Semantics.Value.ToString().Split('|');
                     var text = string.Format("{0} {1:P0}", args[0], e.Result.Confidence);
                     bool show;
