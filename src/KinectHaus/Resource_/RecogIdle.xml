@@ -2,15 +2,9 @@
   <rule id="rootRule">
     <one-of>
       <item>
-        <tag>CANCEL</tag>
+        <tag>XBOX</tag>
         <one-of>
-          <item> cancel </item>
-        </one-of>
-      </item>
-      <item>
-        <tag>PLAY</tag>
-        <one-of>
-          <item> play </item>
+          <item>xbox</item>
         </one-of>
       </item>
     </one-of>

@@ -43,13 +43,18 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ListenContext.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="RecogPlay.cs" />
     <Compile Include="ListenIcon.cs" />
-    <Compile Include="RecogMovies.cs" />
     <Compile Include="IRecog.cs" />
     <Compile Include="RecogIdle.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="RecogCommand.cs" />
-    <Compile Include="RecogSeries.cs" />
     <Compile Include="Vlc.cs" />
     <Compile Include="Listen.cs" />
     <Compile Include="SysTrayApp.cs">
@@ -58,14 +63,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-    </Compile>
     <EmbeddedResource Include="SysTrayApp.resx">
       <DependentUpon>SysTrayApp.cs</DependentUpon>
     </EmbeddedResource>
@@ -83,16 +83,13 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resource_\Recog.xml" />
+    <Resource Include="Resource_\RecogIdle.xml" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resource_\RecogCommand.xml" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resource_\RecogSeries.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resource_\RecogMovies.xml" />
+    <Resource Include="Resource_\RecogPlay.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

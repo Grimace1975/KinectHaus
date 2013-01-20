@@ -4,32 +4,19 @@ namespace KinectHaus
 {
     public interface IRecog
     {
-        string Title { get; }
-        void Start(SpeechRecognitionEngine sre);
-        void Stop();
-        IRecog Process(RecognitionResult r, out bool show);
+        void Start(ListenContext ctx, SpeechRecognitionEngine sre);
+        IRecog Process(RecognitionResult r);
     }
 
     internal class Recog : IRecog
     {
-        public string Title
-        {
-            get { throw new System.NotImplementedException(); }
-        }
-
-        public void Start(SpeechRecognitionEngine sre)
+        public void Start(ListenContext ctx, SpeechRecognitionEngine sre)
         {
             throw new System.NotImplementedException();
         }
 
-        public void Stop()
+        public IRecog Process(RecognitionResult r)
         {
-            throw new System.NotImplementedException();
-        }
-
-        public IRecog Process(RecognitionResult r, out bool show)
-        {
-            show = false;
             throw new System.NotImplementedException();
         }
     }

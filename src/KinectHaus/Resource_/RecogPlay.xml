@@ -1,0 +1,82 @@
+﻿<grammar version="1.0" xml:lang="en-US" root="rootRule" tag-format="semantics/1.0-literals" xmlns="http://www.w3.org/2001/06/grammar">
+  <rule id="rootRule">
+    <one-of>
+      <item>
+        <tag>CANCEL</tag>
+        <one-of>
+          <item>cancel</item>
+        </one-of>
+      </item>
+      <item>
+        <tag>GO</tag>
+        <one-of>
+          <item>go</item>
+        </one-of>
+      </item>
+    </one-of>
+    <ruleref uri="#season"/>
+    <ruleref uri="#episode"/>
+  </rule>
+
+  <rule id="p720">
+    <tag>720</tag>
+    <one-of>
+      <item>seven twenty</item>
+      <item>seven twenty p</item>
+    </one-of>
+  </rule>
+
+  <rule id="p1080">
+    <tag>1080</tag>
+    <one-of>
+      <item>ten eighty</item>
+      <item>ten eighty p</item>
+    </one-of>
+  </rule>
+
+  <rule id="season">
+    <tag>S</tag>
+    <one-of>
+      <item>
+        <item>season</item>
+      </item>
+    </one-of>
+    <ruleref uri="#number"/>
+  </rule>
+
+  <rule id="episode">
+    <tag>E</tag>
+    <one-of>
+      <item>
+        <item>episode</item>
+      </item>
+    </one-of>
+    <ruleref uri="#number"/>
+  </rule>
+
+  <rule id="number">
+    <one-of>
+      <item>
+        one<tag>#1</tag>
+      </item>
+      <item>
+        two<tag>#2</tag>
+      </item>
+      <item>
+        three<tag>#3</tag>
+      </item>
+      <item>
+        four<tag>#4</tag>
+      </item>
+      <item>
+        five<tag>#5</tag>
+      </item>
+      <item>
+        six<tag>#6</tag>
+      </item>
+      <item>
+        seven<tag>#7</tag>
+      </item>
+    </one-of>
+  </rule>
+</grammar>

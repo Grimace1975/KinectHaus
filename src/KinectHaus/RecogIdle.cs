@@ -8,31 +8,31 @@ namespace KinectHaus
 {
     public class RecogIdle : IRecog
     {
+        static readonly string _localPath = "KinectHaus.v.xml";
         static readonly IRecog _recogCommand = new RecogCommand();
+        ListenContext _listenCtx;
 
-        public string Title
+        public static string Name { get; private set; }
+
+        public void Start(ListenContext listenCtx, SpeechRecognitionEngine sre)
         {
-            get { return "Idle"; }
-        }
-
-        public void Start(SpeechRecognitionEngine sre)
-        {
-            using (var memoryStream = new MemoryStream(Encoding.ASCII.GetBytes(Resources.Recog)))
-                sre.LoadGrammar(new Grammar(memoryStream));
-        }
-
-        public void Stop() { }
-
-        public IRecog Process(RecognitionResult r, out bool show)
-        {
-            switch (r.Semantics.Value.ToString())
+            _listenCtx = listenCtx;
+            using (var s = (!File.Exists(_localPath) ? (Stream)new MemoryStream(Encoding.ASCII.GetBytes(Resources.RecogIdle)) : File.OpenRead(_localPath)))
             {
-                case "COMMAND":
-                    SystemSounds.Exclamation.Play();
-                    show = true;
-                    return _recogCommand;
+                var g = new Grammar(s);
+                sre.LoadGrammar(g);
+                Name = "XBOX";
             }
-            show = false;
+        }
+
+        public IRecog Process(RecognitionResult r)
+        {
+            if (!string.IsNullOrEmpty(r.Semantics.Value.ToString()))
+            {
+                SystemSounds.Exclamation.Play();
+                _listenCtx.BalloonTip(2, "KinectHaus\u2122", "Say: Play, Pause, Cancel", ListenIcon.Info);
+                return _recogCommand;
+            }
             return null;
         }
     }

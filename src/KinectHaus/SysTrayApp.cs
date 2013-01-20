@@ -26,7 +26,7 @@ namespace KinectHaus
                 ContextMenu = trayMenu,
                 Visible = true,
             };
-            _listen = new Listen(ShowBallonTip);
+            _listen = new Listen(new ListenContext(this, ShowBallonTip));
             InitializeComponent();
         }
 
@@ -48,9 +48,9 @@ namespace KinectHaus
             base.OnLoad(e);
         }
 
-        private void ShowBallonTip(string title, string text, ListenIcon icon)
+        private void ShowBallonTip(int time, string title, string text, ListenIcon icon)
         {
-            _trayIcon.ShowBalloonTip(15000, title, text, (ToolTipIcon)(int)icon);
+            _trayIcon.ShowBalloonTip(time * 1000, title, text, (ToolTipIcon)(int)icon);
             //Output.Text += text + Environment.NewLine;
         }
 

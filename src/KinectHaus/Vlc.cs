@@ -13,12 +13,6 @@ namespace KinectHaus
             Extensions.SwitchApp("vlc", _path, "\"" + mediaPath + "\"");
         }
 
-        public static void Play()
-        {
-            Extensions.ActivateApp("vlc", null, null);
-            SendKeys.SendWait(" ");
-        }
-
         public static void Pause()
         {
             Extensions.ActivateApp("vlc", null, null);

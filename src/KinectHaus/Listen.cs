@@ -16,11 +16,11 @@ namespace KinectHaus
         public static readonly IRecog CancelRecog = new Recog();
         public static readonly IRecog ResetRecog = new Recog();
         static readonly IRecog _recogIdle = new RecogIdle();
-        readonly Action<string, string, ListenIcon> _balloonTip;
+        readonly ListenContext _listenCtx;
 
-        public Listen(Action<string, string, ListenIcon> balloonTip)
+        public Listen(ListenContext listenCtx)
         {
-            _balloonTip = balloonTip;
+            _listenCtx = listenCtx;
         }
 
         #region Listener
@@ -56,8 +56,8 @@ namespace KinectHaus
             else
                 _sre.SetInputToDefaultAudioDevice();
             RecogStackClear();
+            _listenCtx.BalloonTip(5, "KinectHaus\u2122", string.Format("My name is {0}", RecogIdle.Name), ListenIcon.Info);
             _sre.RecognizeAsync(RecognizeMode.Multiple);
-            _balloonTip("KinectHaus\u2122", "My name is SLAVE", ListenIcon.Info);
         }
 
         public void Stop()
@@ -75,6 +75,7 @@ namespace KinectHaus
                 _sre.RecognizeAsyncStop();
                 _sre = null;
             }
+            TimerStop();
         }
 
         public static string CleanPath(string x)
@@ -95,7 +96,7 @@ namespace KinectHaus
             _recogStack.Clear();
             _sre.UnloadAllGrammars();
             _recog = _recogIdle;
-            _recog.Start(_sre);
+            _recog.Start(_listenCtx, _sre);
             SystemSounds.Beep.Play();
             TimerStop();
         }
@@ -108,7 +109,7 @@ namespace KinectHaus
             {
                 _recog = _recogStack.Pop();
                 _sre.UnloadAllGrammars();
-                _recog.Start(_sre);
+                _recog.Start(_listenCtx, _sre);
             }
         }
 
@@ -117,7 +118,7 @@ namespace KinectHaus
             _recogStack.Push(_recog);
             _recog = item;
             _sre.UnloadAllGrammars();
-            _recog.Start(_sre);
+            _recog.Start(_listenCtx, _sre);
         }
 
         #endregion
@@ -128,11 +129,12 @@ namespace KinectHaus
         Timer _timer;
         DateTime _endTime;
 
-        public void TimerStart()
+        public void TimerStart(int seconds)
         {
+            return;
             if (_timer == null)
                 _timer = new Timer(new TimerCallback(TimerCompletionCallback), null, _timerPeriod, _timerPeriod);
-            _endTime = DateTime.Now.AddSeconds(10);
+            _endTime = DateTime.Now.AddSeconds(seconds);
         }
 
         public void TimerStop()
@@ -157,26 +159,32 @@ namespace KinectHaus
             lock (_recog)
                 if (e.Result.Confidence >= 0.3)
                 {
-                    TimerStart();
-                    var args = e.Result.Semantics.Value.ToString().Split('|');
-                    var text = string.Format("{0} {1:P0}", args[0], e.Result.Confidence);
-                    bool show;
-                    var r = _recog.Process(e.Result, out show);
-                    if (show)
-                        _balloonTip(_recog.Title, text, ListenIcon.None);
-                    if (r == CancelRecog)
-                        RecogStackPop();
-                    else if (r == ResetRecog)
+
+                    var r = _recog.Process(e.Result);
+                    if (r == ResetRecog)
                         RecogStackClear();
+                    else if (r == CancelRecog)
+                    {
+                        RecogStackPop();
+                        TimerStart(5);
+                    }
                     else if (r != null)
+                    {
                         RecogStackPush(r);
+                        TimerStart(15);
+                    }
+                    else
+                        TimerStart(10);
                 }
         }
 
         private void SpeechRejected(object sender, SpeechRecognitionRejectedEventArgs e)
         {
-            //var text = string.Format("{0} {1}", e.Result.Semantics.Value, e.Result.Confidence);
-            //_balloonTip(_recog.Title, text, ListenIcon.Error);
+            lock (_recog)
+            {
+                TimerStart(5);
+  
+            }
         }
     }
 }
